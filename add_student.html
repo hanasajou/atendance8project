@@ -1,0 +1,95 @@
+                                                                                                                                                                                    <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Add Student - Validation</title>
+
+    <style>
+        body { font-family: Arial, sans-serif; }
+        form { width: 350px; margin-top: 20px; }
+        label { font-size: 18px; }
+        input {
+            width: 100%; padding: 8px; margin-top: 5px;
+            font-size: 16px;
+        }
+        button {
+            margin-top: 15px; padding: 10px;
+            width: 100%; font-size: 18px; cursor: pointer;
+        }
+        .error { color: rgb(244, 153, 193); font-size: 14px; }
+    </style>
+</head>
+
+<body>
+
+<h2>Add a New Student</h2>
+
+<form id="studentForm">
+
+    <label>Student ID:</label>
+    <input type="text" id="student_id">
+    <div id="idError" class="error"></div><br>
+
+    <label>Last Name:</label>
+    <input type="text" id="last_name">
+    <div id="lastNameError" class="error"></div><br>
+
+    <label>First Name:</label>
+    <input type="text" id="first_name">
+    <div id="firstNameError" class="error"></div><br>
+
+    <label>Email:</label>
+    <input type="text" id="email">
+    <div id="emailError" class="error"></div><br>
+
+    <button type="submit">Submit</button>
+</form>
+
+
+<script>
+document.getElementById("studentForm").addEventListener("submit", function(event) {
+    let valid = true;
+
+    // Get entered values
+    const id = document.getElementById("student_id").value;
+    const last = document.getElementById("last_name").value;
+    const first = document.getElementById("first_name").value;
+    const email = document.getElementById("email").value;
+
+    // Regular expressions
+    const letters = /^[A-Za-z]+$/;
+    const numbers = /^[0-9]+$/;
+    const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Clear previous error messages
+    document.getElementById("idError").textContent = "";
+    document.getElementById("lastNameError").textContent = "";
+    document.getElementById("firstNameError").textContent = "";
+    document.getElementById("emailError").textContent = "";
+
+    // Validate fields
+    if (!id.match(numbers)) {
+        document.getElementById("idError").textContent = "Student ID must contain only numbers";
+        valid = false;
+    }
+    if (!last.match(letters)) {
+        document.getElementById("lastNameError").textContent = "Last name must contain only letters";
+        valid = false;
+    }
+    if (!first.match(letters)) {
+        document.getElementById("firstNameError").textContent = "First name must contain only letters";
+        valid = false;
+    }
+    if (!email.match(emailFormat)) {
+        document.getElementById("emailError").textContent = "Invalid email format";
+        valid = false;
+    }
+
+    // Stop form submission if validation fails
+    if (!valid) event.preventDefault();
+});
+</script>
+
+</body>
+</html>
+>
