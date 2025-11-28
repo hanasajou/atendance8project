@@ -1,16 +1,15 @@
-                                                                                                                                                                                 <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Attendance System</title>
-
     <style>
-        table { border-collapse: collapse; width: 90%; margin-top: 20px; }
+        table { border-collapse: collapse; width: 95%; margin-top: 20px; }
         th, td { border: 1px solid #000; padding: 8px; text-align: center; }
-        h2 { font-family: Arial, sans-serif; }
+        h2, h3 { font-family: Arial, sans-serif; }
+        form input { padding: 6px; margin: 4px; }
     </style>
 </head>
-
 <body>
 
 <h2>Student Attendance Table</h2>
@@ -20,77 +19,91 @@
         <th>Student ID</th>
         <th>Last Name</th>
         <th>First Name</th>
-
-        <!-- Sessions -->
         <th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th>
-
-        <!-- Participation -->
         <th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th>
-
         <th>Message</th>
-    </tr>
-
-    <tr>
-        <td>101</td>
-        <td>Ahmed</td><td>Sara</td>
-        <td>✓</td><td>✓</td><td></td><td></td><td></td><td></td>
-        <td>✓</td><td></td><td></td><td></td><td></td><td></td>
-        <td></td>
-    </tr>
-
-    <tr>
-        <td>102</td>
-        <td>Yacine</td><td>Ali</td>
-        <td>✓</td><td></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td>
-        <td>✓</td><td>✓</td><td>✓</td><td></td><td></td><td></td>
-        <td></td>
-    </tr>
-
-    <tr>
-        <td>103</td>
-        <td>Houcine</td><td>Rania</td>
-        <td>✓</td><td>✓</td><td></td><td>✓</td><td>✓</td><td></td>
-        <td>✓</td><td>✓</td><td></td><td></td><td></td><td></td>
-        <td></td>
     </tr>
 </table>
 
+<h3>Add New Student</h3>
+
+<form id="studentForm">
+    <input type="text" id="student_id" placeholder="Student ID">
+    <input type="text" id="last_name" placeholder="Last Name">
+    <input type="text" id="first_name" placeholder="First Name">
+    <button type="submit">Add Student</button>
+</form>
+
 <script>
+// Create reusable row function
+function addStudentRow(studentId, lastName, firstName) {
+    const table = document.getElementById("attendanceTable");
+    const row = table.insertRow(-1);
+
+    row.innerHTML = `
+        <td>${studentId}</td>
+        <td>${lastName}</td>
+        <td>${firstName}</td>
+        ${"<td><input type='checkbox' class='session'></td>".repeat(6)}
+        ${"<td><input type='checkbox' class='participation'></td>".repeat(6)}
+        <td class='message'></td>
+    `;
+}
+
+// Add initial students
+addStudentRow("101", "Ahmed", "Sara");
+addStudentRow("102", "Yacine", "Ali");
+addStudentRow("103", "Houcine", "Rania");
+
+// Recalculate attendance results when checkbox changes
+document.addEventListener("change", function () {
     const rows = document.querySelectorAll("#attendanceTable tr");
 
     rows.forEach((row, index) => {
-        if (index === 0) return; // skip header row
+        if (index === 0) return; // skip header
 
-        let cells = row.querySelectorAll("td");
-        let abs = 0;
-        let par = 0;
+        let abs = 0, par = 0;
+        let sessions = row.querySelectorAll(".session");
+        let parts = row.querySelectorAll(".participation");
+        let msg = row.querySelector(".message");
 
-        // Count absences from Sessions S1-S6
-        for (let i = 3; i < 9; i++) {
-            if (cells[i].textContent !== "✓") abs++;
-        }
-
-        // Count participations P1-P6
-        for (let i = 9; i < 15; i++) {
-            if (cells[i].textContent === "✓") par++;
-        }
-
-        // Color rows and write message
-        let msgCell = cells[15];
+        sessions.forEach(box => { if (!box.checked) abs++; });
+        parts.forEach(box => { if (box.checked) par++; });
 
         if (abs < 3) {
             row.style.background = "lightgreen";
-            msgCell.textContent = "Good attendance – Excellent participation";
+            msg.textContent = "Good attendance – Excellent participation";
         } else if (abs >= 3 && abs <= 4) {
             row.style.background = "yellow";
-            msgCell.textContent = "Warning – attendance low – You need to participate more";
+            msg.textContent = "Warning – attendance low – Participate more";
         } else {
             row.style.background = "red";
-            msgCell.textContent = "Excluded – too many absences";
+            msg.textContent = "Excluded – too many absences";
         }
 
-        msgCell.textContent += ' | Absences: ${abs} | Participation: ${par}'
+        msg.textContent += ' | Absences: ${abs} | Participation: ${par}'
     });
+});
+
+// Add student using form
+document.getElementById("studentForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const id = document.getElementById("student_id").value;
+    const last = document.getElementById("last_name").value;
+    const first = document.getElementById("first_name").value;
+
+    if (id === "" || last === "" || first === "") {
+        alert("All fields are required!");
+        return;
+    }
+
+    addStudentRow(id, last, first);
+
+    document.getElementById("student_id").value = "";
+    document.getElementById("last_name").value = "";
+    document.getElementById("first_name").value = "";
+});
 </script>
 
 </body>
