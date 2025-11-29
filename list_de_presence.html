@@ -81,7 +81,7 @@ document.addEventListener("change", function () {
             msg.textContent = "Excluded – too many absences";
         }
 
-        msg.textContent +=  | Absences: ${abs} | Participation: ${par};
+        msg.textContent += ' | Absences: ${abs} | Participation: ${par}'
     });
 });
 
@@ -93,7 +93,7 @@ document.getElementById("studentForm").addEventListener("submit", function(event
     const last = document.getElementById("last_name").value;
     const first = document.getElementById("first_name").value;
 
-    if (id === ""  last === ""  first === "") {
+    if (id === "" || last === "" || first === "") {
         alert("All fields are required!");
         return;
     }
