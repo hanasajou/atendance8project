@@ -77,7 +77,7 @@ function calculate(){
         if(abs<3){row.style.background="lightgreen";msg.textContent="Good Attendance";}
         else if(abs>=3&&abs<=4){row.style.background="yellow";msg.textContent="Warning";}
         else{row.style.background="red";msg.textContent="Excluded";}
-        msg.textContent+= | Abs: ${abs} | Par: ${par};
+        msg.textContent+=` | Abs: ${abs} | Par: ${par}`;
     });
 }
 document.addEventListener("change",calculate);
@@ -110,6 +110,7 @@ $("#attendanceTable").on("click","tr",function(){
     const name=$(this).find("td:nth-child(2)").text()+" "+$(this).find("td:nth-child(3)").text();
     alert("Student: "+name);
 });
+
 // Show Report
 $("#showReport").click(function(){
     const total=$("#attendanceTable tr").length-1;
