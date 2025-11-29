@@ -1,108 +1,164 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Attendance System</title>
-    <style>
-        table { border-collapse: collapse; width: 95%; margin-top: 20px; }
-        th, td { border: 1px solid #000; padding: 8px; text-align: center; }
-        h2, h3 { font-family: Arial, sans-serif; }
-        form input { padding: 6px; margin: 4px; }
-    </style>
+<meta charset="UTF-8">
+<title>Attendance System - Full Version</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid black; padding: 8px; text-align: center; }
+    .highlight { background-color: lightblue !important; }
+    #reportBox { margin-top: 20px; padding: 10px; border: 1px solid black; width: 300px;}
+    form input { margin: 4px; padding: 5px; }
+</style>
 </head>
 <body>
 
-<h2>Student Attendance Table</h2>
+<h2>Attendance System</h2>
+
+<!-- Search -->
+<input type="text" id="search" placeholder="Search by Name">
+
+<!-- Buttons -->
+<button id="showReport">Show Report</button>
+<button id="excellentBtn">Highlight Excellent Students</button>
+<button id="resetBtn">Reset Colors</button>
+<button id="sortAbs">Sort by Absences (Asc)</button>
+<button id="sortPar">Sort by Participation (Desc)</button>
+
+<center><p id="sortStatus"></p></center>
 
 <table id="attendanceTable">
-    <tr>
-        <th>Student ID</th>
-        <th>Last Name</th>
-        <th>First Name</th>
-        <th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th>
-        <th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th>
-        <th>Message</th>
-    </tr>
+<tr>
+    <th>Student ID</th><th>Last Name</th><th>First Name</th>
+    <th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th>
+    <th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th>
+    <th>Message</th>
+</tr>
 </table>
 
-<h3>Add New Student</h3>
+<!-- Report Section -->
+<div id="reportBox" style="display:none;"></div>
 
+<!-- Add Student Form -->
+<h3>Add Student</h3>
 <form id="studentForm">
     <input type="text" id="student_id" placeholder="Student ID">
     <input type="text" id="last_name" placeholder="Last Name">
     <input type="text" id="first_name" placeholder="First Name">
-    <button type="submit">Add Student</button>
+    <input type="email" id="email" placeholder="Email">
+    <button type="submit">Add</button>
 </form>
+<p id="confirm" style="color:green;"></p>
 
 <script>
-// Create reusable row function
-function addStudentRow(studentId, lastName, firstName) {
-    const table = document.getElementById("attendanceTable");
-    const row = table.insertRow(-1);
-
-    row.innerHTML = `
-        <td>${studentId}</td>
-        <td>${lastName}</td>
-        <td>${firstName}</td>
+function addStudentRow(id,last,first){
+    const table=document.getElementById("attendanceTable");
+    const row=table.insertRow(-1);
+    row.innerHTML=`
+        <td>${id}</td><td>${last}</td><td>${first}</td>
         ${"<td><input type='checkbox' class='session'></td>".repeat(6)}
         ${"<td><input type='checkbox' class='participation'></td>".repeat(6)}
-        <td class='message'></td>
-    `;
+        <td class='message'></td>`;
 }
 
-// Add initial students
-addStudentRow("101", "Ahmed", "Sara");
-addStudentRow("102", "Yacine", "Ali");
-addStudentRow("103", "Houcine", "Rania");
+addStudentRow("101","Ahmed","Sara");
+addStudentRow("102","Yacine","Ali");
+addStudentRow("103","Houcine","Rania");
 
-// Recalculate attendance results when checkbox changes
-document.addEventListener("change", function () {
-    const rows = document.querySelectorAll("#attendanceTable tr");
+// Recalculate absences
+function calculate(){
+    document.querySelectorAll("#attendanceTable tr").forEach((row,index)=>{
+        if(index===0)return;
+        let abs=0,par=0;
+        row.querySelectorAll(".session").forEach(c=>{ if(!c.checked)abs++;});
+        row.querySelectorAll(".participation").forEach(c=>{if(c.checked)par++;});
+        const msg=row.querySelector(".message");
+        if(abs<3){row.style.background="lightgreen";msg.textContent="Good Attendance";}
+        else if(abs>=3&&abs<=4){row.style.background="yellow";msg.textContent="Warning";}
+        else{row.style.background="red";msg.textContent="Excluded";}
+        msg.textContent+= | Abs: ${abs} | Par: ${par};
+    });
+}
+document.addEventListener("change",calculate);
 
-    rows.forEach((row, index) => {
-        if (index === 0) return; // skip header
+// Add student form
+document.getElementById("studentForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    const id=document.getElementById("student_id").value;
+    const last=document.getElementById("last_name").value;
+    const first=document.getElementById("first_name").value;
+    addStudentRow(id,last,first);
+    document.getElementById("confirm").textContent="Student added successfully!";
+    calculate();
+});
 
-        let abs = 0, par = 0;
-        let sessions = row.querySelectorAll(".session");
-        let parts = row.querySelectorAll(".participation");
-        let msg = row.querySelector(".message");
-
-        sessions.forEach(box => { if (!box.checked) abs++; });
-        parts.forEach(box => { if (box.checked) par++; });
-
-        if (abs < 3) {
-            row.style.background = "lightgreen";
-            msg.textContent = "Good attendance – Excellent participation";
-        } else if (abs >= 3 && abs <= 4) {
-            row.style.background = "yellow";
-            msg.textContent = "Warning – attendance low – Participate more";
-        } else {
-            row.style.background = "red";
-            msg.textContent = "Excluded – too many absences";
-        }
-
-        msg.textContent += ' | Absences: ${abs} | Participation: ${par}'
+// SEARCH
+$("#search").on("keyup",function(){
+    const value=$(this).val().toLowerCase();
+    $("#attendanceTable tr").filter(function(){
+        $(this).toggle($(this).text().toLowerCase().indexOf(value)>-1)
     });
 });
 
-// Add student using form
-document.getElementById("studentForm").addEventListener("submit", function(event) {
-    event.preventDefault();
+// HOVER highlight
+$("#attendanceTable").on("mouseenter","tr",function(){ $(this).addClass("highlight"); });
+$("#attendanceTable").on("mouseleave","tr",function(){ $(this).removeClass("highlight"); });
 
-    const id = document.getElementById("student_id").value;
-    const last = document.getElementById("last_name").value;
-    const first = document.getElementById("first_name").value;
+// CLICK row show pop-up
+$("#attendanceTable").on("click","tr",function(){
+    const name=$(this).find("td:nth-child(2)").text()+" "+$(this).find("td:nth-child(3)").text();
+    alert("Student: "+name);
+});
+// Show Report
+$("#showReport").click(function(){
+    const total=$("#attendanceTable tr").length-1;
+    let present=0,participated=0;
+    $("#attendanceTable tr").each(function(index){
+        if(index===0)return;
+        let checked=$(this).find(".session:checked").length;
+        if(checked>0)present++;
+        let par=$(this).find(".participation:checked").length;
+        if(par>0)participated++;
+    });
+    $("#reportBox").html(`
+        <h4>Report</h4>
+        Total students: ${total}<br>
+        Present: ${present}<br>
+        Participated: ${participated}
+    `).show();
+});
 
-    if (id === "" || last === "" || first === "") {
-        alert("All fields are required!");
-        return;
-    }
+// Highlight excellent
+$("#excellentBtn").click(()=>{
+    $("#attendanceTable tr").each(function(index){
+        if(index===0)return;
+        let abs=$(this).find(".session:not(:checked)").length;
+        if(abs<3)$(this).fadeOut(200).fadeIn(200).css("background","lightgreen");
+    });
+});
 
-    addStudentRow(id, last, first);
+// Reset
+$("#resetBtn").click(()=>{
+    $("#attendanceTable tr").css("background","white");
+    calculate();
+});
 
-    document.getElementById("student_id").value = "";
-    document.getElementById("last_name").value = "";
-    document.getElementById("first_name").value = "";
+// Sorting
+$("#sortAbs").click(()=>{
+    let rows=$("#attendanceTable tr:not(:first)").toArray().sort((a,b)=>{
+        return $(a).find(".session:not(:checked)").length - $(b).find(".session:not(:checked)").length;
+    });
+    rows.forEach(r=>$("#attendanceTable").append(r));
+    $("#sortStatus").text("Sorted by Absences Ascending");
+});
+
+$("#sortPar").click(()=>{
+    let rows=$("#attendanceTable tr:not(:first)").toArray().sort((a,b)=>{
+        return $(b).find(".participation:checked").length - $(a).find(".participation:checked").length;
+    });
+    rows.forEach(r=>$("#attendanceTable").append(r));
+    $("#sortStatus").text("Sorted by Participation Descending");
 });
 </script>
 
