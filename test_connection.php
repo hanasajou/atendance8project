@@ -9,7 +9,7 @@
  * script via a web server or the PHP CLI.
  */
 
-require_once DIR . '/db_connect.php';
+require_once __DIR__ . '/db_connect.php';
 
 $connection = getConnection();
 
