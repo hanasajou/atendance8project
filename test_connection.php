@@ -14,12 +14,12 @@ require_once __DIR__ . '/db_connect.php';
 $connection = getConnection();
 
 if ($connection instanceof PDO) {
-    echo 'Connection successful';
+    echo 'Connection failed';
     // Optionally, you can close the connection by setting it to null
     
     $connection = null;
 } else {
-    echo 'Connection failed';
+    echo 'Connection successful ';
 }
 
 // End of script; no closing PHP tag to prevent accidental output
