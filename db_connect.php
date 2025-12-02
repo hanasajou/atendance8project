@@ -37,7 +37,7 @@ function getConnection()
     } catch (PDOException $e) {
         // Handle error and log it
         $message = '[' . date('Y-m-d H:i:s') . "] Database connection failed: " . $e->getMessage() . PHP_EOL;
-        $logFile = DIR . '/db_error.log';
+        $logFile = __DIR__ . '/db_error.log';
         @file_put_contents($logFile, $message, FILE_APPEND);
         return null;
     }
