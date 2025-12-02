@@ -1,33 +1,77 @@
-                                                                                                                                                                               <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Attendance Navbar</title>
-    <style>
-        nav {
-            background: #333;
-            padding: 15px;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 15px;
-            font-size: 18px;
-        }
-        nav a:hover {
-            color: yellow;
-        }
-    </style>
-</head>
-<body>
-
 <nav>
-    <a href="#">Home</a>
-    <a href="#">Attendance List</a>
-    <a href="#">Add Student</a>
-    <a href="#">Reports</a>
-    <a href="#">Logout</a>
+    <a href="index.html"><i class="fa-solid fa-house"></i> Accueil</a>
+    <a href="list_de_presence.html"><i class="fa-solid fa-clipboard-list"></i> Liste</a>
+    <a href="add_student.html"><i class="fa-solid fa-user-plus"></i> Ajouter</a>
 </nav>
 
-</body>
-</html>
+<!-- ==== TEXTE WELCOME ==== -->
+<div class="welcome">
+    <h1><strong>Welcome to Attendance Student</strong></h1>
+    <p>This site makes it possible to manage the absences and attendance of students.</p>
+</div>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    nav {
+        background: #d86bc3;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+    }
+
+    nav a {
+        background: white;
+        color: #d86bc3;
+        text-decoration: none;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: 0.3s;
+    }
+
+    nav a:hover {
+        background: #d86bc3;
+        color: white;
+    }
+
+    nav a.active {
+        background: #d86bc3;
+        color: white;
+    }
+
+    /* Style du texte Welcome */
+    .welcome {
+        text-align: center;
+        margin-top: 40px;
+        color: #222;
+    }
+
+    .welcome h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .welcome p {
+        font-size: 18px;
+        color: #555;
+    }
+</style>
+
+<script>
+    const currentPage = window.location.pathname.split("/").pop();
+    document.querySelectorAll("nav a").forEach(link => {
+        if (link.getAttribute("href") === currentPage) {
+            link.classList.add("active");
+        }
+    });
+</script>
